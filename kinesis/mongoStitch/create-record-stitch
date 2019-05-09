@@ -1,0 +1,23 @@
+// Create function for getting the  mongo document  
+
+exports = function(event){
+ const awsService = context.services.get('aws');
+ 
+ // sending event to kinesis stream 
+ try{
+ 
+   awsService.kinesis("us-east-1").PutRecord({
+     Data: JSON.stringify(event),
+     StreamName: "sf-mongo-update",
+     PartitionKey: "AdjustAsNeeded"
+   }).then(function(response) {
+		console.log("Response " + response)
+		return response;
+   });
+
+   console.log("Successfully put the following document into the " +
+     "sf-mongo-update Kinesis stream: " +EJSON.stringify(event.fullDocument));
+ }catch(error){
+   console.log(error);
+ }
+};
